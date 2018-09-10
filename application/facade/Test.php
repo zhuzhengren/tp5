@@ -14,10 +14,6 @@ class Test extends \think\Facade
 //        return 'app\common\Test';
 //    }
     
-    //这种方式不行？？？
-//    protected static function getFacadeClass() {
-//        parent::getFacadeClass();
-//    }
     
     
 }

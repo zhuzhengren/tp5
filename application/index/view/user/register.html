@@ -1,0 +1,114 @@
+{include file="public::header"}
+<!--导航-->
+{include file="public::nav"}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="page-header">
+            <h2>用户注册</h2>
+        </div>
+
+        <div >
+            <button onclick="myclick()">location</button>
+        </div>
+
+
+
+
+        <form class="form-horizontal"  method="post" id="login" >
+            <div class="form-group">
+                <label for="inputEmail1" class="col-sm-2 control-label">用户名</label>
+                <div class="col-sm-10">
+                    <input type="text" name="name" class="form-control" id="inputEmail1" placeholder="用户名">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail2" class="col-sm-2 control-label">邮箱</label>
+                <div class="col-sm-10">
+                    <input type="text" name="email" class="form-control" id="inputEmail2" placeholder="邮箱">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">手机</label>
+                <div class="col-sm-10">
+                    <input type="text" name="mobile" class="form-control" id="inputEmail3" placeholder="手机号">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail4" class="col-sm-2 control-label">密码</label>
+                <div class="col-sm-10">
+                    <input type="password" name="password" class="form-control" id="inputEmail4" placeholder="密码">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail5" class="col-sm-2 control-label">确认密码</label>
+                <div class="col-sm-10">
+                    <input type="password" name="password_confirm" class="form-control" id="inputEmail5" placeholder="确认密码">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" class="btn btn-default" id="register">注册</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <script type="text/javascript">
+        function myclick() {
+            window.location.href = "https://www.baidu.com";
+        }
+
+
+        $(function () {
+            $("#register").on('click', function () {
+                // alert($("#login").serialize()); 
+                $.ajax({
+                    type: "post",
+                    url: "{:url('index/user/insert')}",
+                    data: $('#login').serialize(),
+                    //此处建议使用text字段，避免json格式错误导致失败
+                    dataType: "json",
+                    //此处表示ajax同步，很重要，就是在这里卡了！！！！！！！！
+                    async: false,
+                    success: function (data) {
+                        switch (data.status) {
+                            case 1:
+                                window.location.href="{:url('index/index')}";
+                                alert("ss");
+                                break;
+                            case 0:
+                            case - 1:
+                                alert(data.message);
+                                window.location.back();
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        /*弹出jqXHR对象的信息*/
+                        alert(" ajax error");
+                        alert(jqXHR.responseText);
+//                        alert(jqXHR.status);
+//                        alert(jqXHR.readyState);
+//                        alert(jqXHR.statusText);
+//                        /*弹出其他两个参数的信息*/
+//                        alert(textStatus);
+//                        alert(errorThrown);
+
+                    }
+
+                })
+            })
+
+        })
+
+    </script>
+
+
+
+    {include file="public::right" /}
+    {include file="public::footer" /}
