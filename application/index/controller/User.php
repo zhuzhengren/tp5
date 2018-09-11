@@ -30,7 +30,13 @@ class User extends Base {
             if (true !== $res) {
                 return ['status' => -1, "message" => $res];
             } else {
-                if (UserModel::create($data)) {
+                if ($user = UserModel::create($data)) {
+                    //create()返回的是用户的模型
+                    //实现注册成功后自动登陆
+                    $userinfo = UserModel::get($user->id);
+                    Session::set('user_name',$userinfo->name);
+                    Session::set('user_id',$userinfo->id);
+                    
                     return ['status' => 1, 'message' => "注册成功"];
                 } else {
                     return ['status' => 0, 'message' => $res];
@@ -43,7 +49,7 @@ class User extends Base {
 
     //用户登陆
     public function login() {
-        $this->isLogin();
+        $this->isLogind();
         return $this->view->fetch('login', ['title' => '用户登录']);
     }
 
