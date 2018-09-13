@@ -6,25 +6,21 @@
     <div class="col-md-8">
         <!--页头-->
         <div class="page-header">
-            <h2>{$cateName}</h2>
+            <h2>{$art.cate_id|getCateName}</h2>
         </div>
-        {volist name="artList" id="art" empty="$empty"}
+        
         <div>
-            <img class="img-rounded" src="/uploads/{$art.title_img}" style="margin-right: 40px;float: left;width:100px;height:85px ">
-            <div style="float: left;width:80%" >
+            <div  >
                 <h4><a href="{:url('detail',['artid'=>$art.id])}">{$art.title}</a></h4>
                 <p> 发布者:{$art.user_id|getUserNameById} &nbsp;&nbsp;&nbsp;&nbsp;
                     发布时间:{$art.create_time|date='Y-m-d'}
                     阅读量:{$art.pv}
                 </p>
-                <div>{$art.content|getArtContent}</div>
+                <div>{$art.content}</div>
                 <hr>
             </div>
         </div>
-        {/volist}
-        <div class="text-center">
-            {$artList|raw}
-        </div>
+      
     </div>
 
 

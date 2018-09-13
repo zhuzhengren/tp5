@@ -16,10 +16,10 @@ class Article extends Model {
     protected $table = 'zh_article'; //数据源
     //定义时间戳字段名：默认为create_time,如果一直可以省略
     //如果想关闭莫哥时间戳字段，将他置为false即可：$create_time=false
-    //protected $autoWriteTimestamp = true; //自动时间戳
-    protected $createtime = 'create_time';
+    protected $autoWriteTimestamp = true; //自动时间戳
+    protected $createtime = 'create_time'; 
     protected $updatetime = 'update_time';
-    protected $dateFormat = 'Y年m月d日';
+    protected $dateFormat = 'Y年m月d日'; //时间字段取出后的默认时间格式
 
     //开启自动设置
     protected $auto = []; //无论是新增还是更新都要设置的字段
