@@ -8,19 +8,174 @@
         <div class="page-header">
             <h2>{$art.cate_id|getCateName}</h2>
         </div>
-        
+
         <div>
             <div  >
                 <h4><a href="{:url('detail',['artid'=>$art.id])}">{$art.title}</a></h4>
                 <p> 发布者:{$art.user_id|getUserNameById} &nbsp;&nbsp;&nbsp;&nbsp;
                     发布时间:{$art.create_time|date='Y-m-d'}
-                    阅读量:{$art.pv}
-                </p>
+                    阅读量:{$art.pv}&nbsp;&nbsp;&nbsp;&nbsp;{$fav}&nbsp;&nbsp;&nbsp;&nbsp;{$like}
+
+                </p>      
                 <div>{$art.content}</div>
-                <hr>
+                <hr>                             
+                <button
+                    type="button" id="fav" 
+                    user_id="{$art.user_id}" 
+                    session_id="{$Think.session.user_id}"
+                    article_id="{$art.id}"
+
+
+                    {if $fav == 0}
+                    class="btn btn-default" 
+                    > 收藏
+                    {else/}
+                    class="btn btn-success"
+                    > 已收藏
+                    {/if}
+                </button>
+
+                <button 
+                    type="button" id="like" 
+                    session_id="{$Think.session.user_id}"
+                    article_id="{$art.id}"
+                    {if $like == 0 }
+                    class="btn btn-default"
+                    > 点赞
+                    {else/}
+                    class="btn btn-success"
+                    > 已点赞
+                    {/if} 
+
+                </button>
+
             </div>
         </div>
-      
+        <script>
+            $(function () {
+                $("#fav").on('click', function () {
+                    var userId = $(this).attr('user_id');
+                    var artId = $(this).attr('article_id');
+                    var sessionId = $(this).attr('session_id');
+
+                    if (userId && artId) {
+                        $.ajax({
+                            type: "get",
+                            url: "{:url('index/fav')}",
+                            data: {
+                                user_id: userId,
+                                art_id: artId,
+                                session_id: sessionId,
+                                time: new Date().getTime()
+                            },
+                            //此处建议使用text字段，避免json格式错误导致失败
+                            dataType: "json",
+                            //此处表示ajax同步，很重要，就是在这里卡了！！！！！！！！
+                            async: false,
+                            success: function (data) {
+                                switch (data.status) {
+                                    case 1:
+                                        //收藏成功
+                                        $('#fav').attr('class', 'btn btn-success');
+                                        $('#fav').text(data.message);
+                                        break;
+                                    case 0:
+                                        //取消收藏
+                                        $('#fav').attr('class', 'btn btn-default');
+                                        $('#fav').text(data.message);
+                                        break;
+                                    case - 1:
+                                        //请求方式错误
+                                        alert(data.message);
+                                        window.location.back();
+                                        break;
+                                    case - 2:
+                                        alert(data.message);
+                                        window.location.href = '{:url("index/user/login")}';
+                                        break;
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                /*弹出jqXHR对象的信息*/
+                                alert(" ajax error");
+                                alert(jqXHR.responseText);
+                                //                                alert(jqXHR.status);
+                                //                                alert(jqXHR.readyState);
+                                //                                alert(jqXHR.statusText);
+                                //                                /*弹出其他两个参数的信息*/
+                                //                                alert(textStatus);
+                                //                                alert(errorThrown);
+
+                            }
+
+                        })
+                    }
+                })
+
+            })
+
+            $(function () {
+                $("#like").on('click', function () {
+                    var artId = $(this).attr('article_id');
+                    var sessionId = $(this).attr('session_id');
+
+                    if (artId) {
+                        $.ajax({
+                            type: "get",
+                            url: "{:url('index/like')}",
+                            data: {
+                                art_id: artId,
+                                session_id: sessionId,
+                                time: new Date().getTime()
+                            },
+                            //此处建议使用text字段，避免json格式错误导致失败
+                            dataType: "json",
+                            //此处表示ajax同步，很重要，就是在这里卡了！！！！！！！！
+                            async: false,
+                            success: function (data) {
+                                switch (data.status) {
+                                    case 1:
+                                        //点赞成功
+                                        $('#like').attr('class', 'btn btn-success');
+                                        $('#like').text(data.message);
+                                        break;
+                                    case 0:
+                                        //取消点赞
+                                        $('#like').attr('class', 'btn btn-default');
+                                        $('#like').text(data.message);
+                                        break;
+                                    case - 1:
+                                        //请求方式错误
+                                        alert(data.message);
+                                        window.location.back();
+                                        break;
+                                    case - 2:
+                                        //用户未登陆
+                                        alert(data.message);
+                                        window.location.href = '{:url("index/user/login")}';
+                                        break;
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                /*弹出jqXHR对象的信息*/
+                                alert(" ajax error");
+                                alert(jqXHR.responseText);
+                                //                                alert(jqXHR.status);
+                                //                                alert(jqXHR.readyState);
+                                //                                alert(jqXHR.statusText);
+                                //                                /*弹出其他两个参数的信息*/
+                                //                                alert(textStatus);
+                                //                                alert(errorThrown);
+
+                            }
+
+                        })
+                    }
+                })
+
+            })
+        </script>
+
     </div>
 
 
