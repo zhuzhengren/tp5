@@ -17,9 +17,9 @@ return [
     // 数据库名
     'database'        => 'zh',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'zh',
     // 密码
-    'password'        => '',
+    'password'        => 'zhpassword',
     // 端口
     'hostport'        => '',
     // 连接dsn
