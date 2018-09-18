@@ -9,7 +9,7 @@
         </div>
 
         <form action="{:url('article/doEdit')}"  method="post" id="login" enctype="multipart/form-data" >
-            <input type="hidden" name="user_id" value="{$Think.session.user_id}">
+            <input type="hidden" name="id" value="{$artInfo.id}">
 
             <div class="form-group">
                 <label for="title" class="control-label">文章标题</label>

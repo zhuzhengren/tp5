@@ -28,23 +28,23 @@ class Article extends Base {
     public function artList() {
         //判断是否登陆
         $this->isLogin();
-        
+
         //  获取用户的ID和用户的级别
         $userId = Session::get('admin_id');
         $isAdmin = Session::get('admin_level');
-     
-        
+
+
         //获取当前用户发布的文章
-        $artList = ArtModel::where('user_id',$userId)->paginate(5);
-        
+        $artList = ArtModel::where('user_id', $userId)->paginate(5);
+
         //如果超级管理员
-        if($isAdmin==1){
+        if ($isAdmin == 1) {
             $artList = ArtModel::paginate(5);
         }
-        
+
         //3.设置模板变量
         $this->view->assign("title", '文章管理');
-        $this->view->assign("empty",'<span stype="color:red">没有文章</span>');
+        $this->view->assign("empty", '<span stype="color:red">没有文章</span>');
         $this->view->assign('artList', $artList);
         //渲染输出
         // halt($cateList);
@@ -62,39 +62,54 @@ class Article extends Base {
         //3.设置模板变量
         $this->view->assign('title', "编辑文章");
         $this->view->assign('artInfo', $artInfo);
-        $this->view->assign('cateList',$cateList);
+        $this->view->assign('cateList', $cateList);
         //4.渲染模板
         return $this->view->fetch('artEdit');
     }
 
-    //  执行编辑操作
+    //  执行文章的编辑操作
     public function doEdit() {
-        //1.获取用户提交的信息
+        //获取上传的信息
         $data = Request::param();
+        //获取图片信息
+        //验证成功
+        //获取一下图片的信息
+        $file = request()->File('title_img');
+        //文件信息验证成功后，在上传到服务器指定的目录，以public为起始目录
+        $info = $file->validate([
+                    'size' => 1024 * 1024,
+                    'ext' => 'jpeg,jpg,png,git',
+                ])->move("uploads");
 
-        //2。取出更新主键
-        $id = $data['id'];
+        if ($info) {
+            //上传成功
+            //用户上传到服务器之后的名字
+            //getSaveName()全路径 getFileName()文件名
 
-        //4.删除主键ID
-        unset($data['id']);
-
-        if (CateModel::where('id', $id)->data($data)->update()) {
-            return $this->success('更新成功', 'cateList');
-        }
-
-        return $this->error('更新失败');
-    }
-
-    //执行删除操作
-    public function doDelete() {
-        $id = Request::param('id');
-        //执行删除 其实是更新状态，设置为不可用
-        if (CateModel::where('id', $id)->delete()) {
-            return $this->success('删除成功');
+            $data['title_img'] = $info->getSaveName();
+            //    echo '<script>alert("' . $info->getFileName() . '");location.back();</script>';
         } else {
-            return $this->error('删除失败');
+            $this->error($file->getError());
+        }
+
+        //  保存文章信息
+        if (ArtModel::update($data)) {
+            $this->success("文章更新成功", 'artList');
+        } else {
+            $this->error("文章更新失败");
         }
     }
 
+    //执行文章的删除操作
+    public function doDelete() {
+        //halt(Request::param());
+        $artId = Request::param("id");
+        
+        if(ArtModel::where('id',$artId)->update(['status'=>'0'])){
+            $this->success("删除成功");
+        }
+        $this->error("删除失败");
+        
+    }
 
 }

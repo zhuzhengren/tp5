@@ -10,10 +10,10 @@ namespace app\admin\common\model;
 
 use think\Model;
 
-class Cate extends Model {
+class Site extends Model {
     
     protected $pk = 'id';
-    protected $table = 'zh_article_category';
+    protected $table = 'zh_site';
     
     protected $autoWriteTimestamp = true; //自动时间戳
     protected $createtime = 'create_time';
@@ -22,7 +22,7 @@ class Cate extends Model {
     //开启自动设置
     protected $auto = []; //无论是新增还是更新都要设置的字段
     //仅新增有效
-    protected $insert = ['create_time', 'status' => 1];
+    protected $insert = ['create_time', 'status' => 1, 'is_open' => 1, 'is_reg' => 0];
     //仅更新的时候设置
     protected $update = ['update_time'];
     

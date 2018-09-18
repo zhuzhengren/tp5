@@ -34,10 +34,14 @@ class User extends Base {
         $map[] = ['status','=',1];
         $result = UserModel::where($map)->find();
         if ($result) {
-          //  Session::set('user_id',$result['id']);
+            //兼容一下后台登陆，前台登陆同步
+            Session::set('user_id',$result['id']);
+            Session::set('user_name',$result['name']);
+            
             Session::set('admin_id', $result['id']);
             Session::set('admin_name', $result['name']);
             Session::set('admin_level', $result['is_admin']);
+            
             $this->success('登陆成功', 'admin/user/userlist');
         }
         $this->error("登陆失败");
