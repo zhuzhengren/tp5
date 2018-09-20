@@ -5,6 +5,7 @@ namespace app\index\controller;
 use app\common\controller\Base;
 use app\common\model\ArticleCate;
 use app\common\model\Article;
+use app\common\model\Comment;
 use think\facade\Request;
 use think\Db;
 use think\facade\Session;
@@ -25,11 +26,11 @@ class Index extends Base {
             //条件2
             $map[] = ['title', 'like', '%' . $keywords . '%'];
             //点击分页查询按钮时额外的参数，防止点击搜索结果第二页参数消失的问题
-            $pagQuery=['keywords'=>$keywords];
-        }else{
-            $pagQuery=[];
+            $pagQuery = ['keywords' => $keywords];
+        } else {
+            $pagQuery = [];
         }
-        
+
         //分类信息显示
         $cateId = Request::param('cate_id');
         //如果存在分类ID
@@ -42,22 +43,22 @@ class Index extends Base {
             $artList = Db::table('zh_article')
                     ->where($map)
                     ->order('create_time', 'desc')
-                    ->paginate(3,false,[
-                        'query'=>$pagQuery,
-                        'type'=>'bootstrap',
-                        'var_page'=>'artList',
-                    ]);
+                    ->paginate(3, false, [
+                'query' => $pagQuery,
+                'type' => 'bootstrap',
+                'var_page' => 'artList',
+            ]);
 
             $this->view->assign('cateName', $res->name);
         } else {
             $artList = Db::table('zh_article')
                     ->where($map)
                     ->order('create_time', 'desc')
-                    ->paginate(3,false,[
-                        'query'=>$pagQuery,
-                        'type'=>'bootstrap',
-                        'var_page'=>'artList',
-                    ]);
+                    ->paginate(3, false, [
+                'query' => $pagQuery,
+                'type' => 'bootstrap',
+                'var_page' => 'artList',
+            ]);
             $this->view->assign('cateName', "全部文章");
         }
         $this->view->assign('empty', '<h3>没有文章</h3>');
@@ -152,19 +153,28 @@ class Index extends Base {
             $map[] = ['art_id', '=', $artId];
             $fav = Db::table('zh_user_collect')->where($map)->find();
             //判断是否收藏
-            if(is_null($fav)){
+            if (is_null($fav)) {
                 $this->view->assign('fav', 0);
-            }else{
+            } else {
                 $this->view->assign('fav', 1);
             }
             //判断是否点赞
             $like = Db::table('zh_user_like')->where($map)->find();
-            if(is_null($like)){
+            if (is_null($like)) {
                 $this->view->assign('like', 0);
-            }else{
+            } else {
                 $this->view->assign('like', 1);
             }
         }
+        $commentList = Comment::all(function($query) use ($artId) {
+                    $query->where('status', 1)
+                            ->where('art_id', $artId)
+                            ->order('create_time', 'desc');
+                });
+
+        //  添加评论
+        $this->assign('commentList', $commentList);
+
 
 
         return $this->view->fetch('detail');
@@ -233,6 +243,19 @@ class Index extends Base {
             //已收藏 取消收藏
             Db::table('zh_user_like')->where($map)->delete();
             return ['status' => 0, 'message' => '已取消点赞'];
+        }
+    }
+
+    public function insertComment() {
+
+        if (Request::isAjax()) {
+            $data = Request::param();
+            //  halt($data);
+            if (Comment::create($data, true)) {
+                return ['status' => 1, 'message' => '发表成功'];
+            } else {
+                return ['status' => -1, 'message' => '发表失败'];
+            }
         }
     }
 
