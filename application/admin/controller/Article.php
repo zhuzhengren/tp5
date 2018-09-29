@@ -48,7 +48,7 @@ class Article extends Base {
         $this->view->assign('artList', $artList);
         //渲染输出
         // halt($cateList);
-        return $this->view->fetch('artlist');
+        return $this->view->fetch('artList');
     }
 
     //显示编辑页面

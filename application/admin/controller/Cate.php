@@ -35,7 +35,7 @@ class Cate extends Base {
         $this->view->assign('cateList', $cateList);
         //渲染输出
         // halt($cateList);
-        return $this->view->fetch('catelist');
+        return $this->view->fetch('cateList');
     }
 
     //显示编辑页面
