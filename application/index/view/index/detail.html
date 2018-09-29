@@ -17,7 +17,9 @@
                     阅读量:{$art.pv}&nbsp;&nbsp;&nbsp;&nbsp;{$fav}&nbsp;&nbsp;&nbsp;&nbsp;{$like}
 
                 </p>      
-                <div>{$art.content}</div>
+                <div style="word-break:break-all"  >
+	<?php echo str_replace('script','\<script\>',stripslashes(htmlspecialchars_decode($art['content']))) ?> 
+		</div>
                 <hr>                             
                 <button
                     type="button" id="fav" 
