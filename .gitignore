@@ -2,3 +2,6 @@
 /runtime/
 /extend/
 
+/nbproject/
+/public/static/
+/public/uploads/
